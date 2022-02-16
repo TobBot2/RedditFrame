@@ -1,7 +1,8 @@
+from tkinter.tix import INTEGER
 import requests
 import random
 
-def get_subreddit(index = None):
+def get_subreddit(index: int = None):
     with open('subreddits.csv', 'r') as f:
         subreddits = f.read().split(',')
 
@@ -11,7 +12,7 @@ def get_subreddit(index = None):
     random_index = random.randint(0, len(subreddits) - 1)
     return subreddits[random_index]
 
-def get_top_n_json(subreddit, n, time_frame):
+def get_top_n_json(subreddit: str, n: int, time_frame: str):
     # get json
     try:
         base_url = f'https://www.reddit.com/r/{subreddit}/top.json?limit={n}&t={time_frame}'
