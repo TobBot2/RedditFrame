@@ -1,9 +1,10 @@
-from tkinter.tix import INTEGER
+import filer
+
 import requests
 import random
 
 def get_subreddit(index: int = None):
-    with open('subreddits.csv', 'r') as f:
+    with open(filer.base() + 'data/subreddits.csv', 'r') as f:
         subreddits = f.read().split(',')
 
     if index != None:
