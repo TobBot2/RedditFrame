@@ -8,7 +8,7 @@ def get_image_from_url(url: str):
     with open(filer.base() + 'postimg.png', 'wb') as f:
         f.write(raw_img)
 
-def resize_and_crop(new_size: tuple[int, int]):
+def resize_and_crop(new_size: tuple):
     with Image.open(filer.base() + 'postimg.png') as img:
         size = img.size
         aspect = size[0] / size[1] # x/y
@@ -25,7 +25,7 @@ def resize_and_crop(new_size: tuple[int, int]):
         new_img = img.resize((new_size[0], new_size[1]), Image.BILINEAR, source_box)
         new_img.save(filer.base() + 'postimg.png')
 
-def resize_with_bars(new_size: tuple[int, int]):
+def resize_with_bars(new_size: tuple):
     bar_color = (128, 128, 128)
 
     with Image.open(filer.base() + 'postimg.png') as img:
@@ -34,22 +34,22 @@ def resize_with_bars(new_size: tuple[int, int]):
         new_aspect = new_size[0] / new_size[1]
         if (aspect > new_aspect): # increasing size, so flip the check
             # expand vertically
-            border = int((size[0] - size[1] * new_aspect) /2)
+            border = int((size[0] / new_aspect - size[1]) /2)
             vertical = True
             img = ImageOps.expand(img, (0, border), bar_color)
         else:
             # expand horizontally
-            border = int((size[1] - size[0] / new_aspect) /2)
+            border = int((size[1] * new_aspect - size[0]) /2)
             vertical = False
             img = ImageOps.expand(img, (border, 0), bar_color)
         img = img.resize(new_size, Image.BILINEAR)
         img.save(filer.base() + 'postimg.png')
 
-        # TODO: Fix corrected_border - only does left side for horizontal
+        # TODO: Fix corrected_border
         if vertical:
-            corrected_border = border / (size[0] * new_aspect) * new_size[1]
+            corrected_border = border / (size[0] / new_aspect) * new_size[1]
         else:
-            corrected_border = border / (size[1] / new_aspect) * new_size[0]
+            corrected_border = border / (size[1] * new_aspect) * new_size[0]
 
         # is_reject is determined if the aspect ratio is too far apart
         is_reject = False
@@ -69,12 +69,12 @@ def reapply_bars(bar_size: int, is_vertical: bool):
         if is_vertical:
             for x in range(img.size[0]):
                 for y in range(img.size[1]):
-                    if y < bar_size or y > img.size[1] - bar_size:
+                    if y < bar_size or y > img.size[1] - bar_size - 1:
                         pixels[x, y] = bar_color
         else:
             for x in range(img.size[0]):
                 for y in range(img.size[1]):
-                    if x < bar_size or x > img.size[1] - bar_size:
+                    if x < bar_size or x > img.size[0] - bar_size - 1:
                         pixels[x, y] = bar_color
 
         img.save(filer.base() + 'postimg.png')
@@ -145,7 +145,7 @@ def FS_dithering(filepath: str = "postimg.png"):
 
         img.save(filer.base() + filepath)
 
-def overlay_image(overlay_img_path: str, position: tuple[int, int]):
+def overlay_image(overlay_img_path: str, position: tuple):
     with Image.open(filer.base() + overlay_img_path) as overlay_img:
         overlay_pixels = overlay_img.load()
     
@@ -158,3 +158,16 @@ def overlay_image(overlay_img_path: str, position: tuple[int, int]):
                     pixels[x, y] = overlay_pixels[x - position[0], y - position[1]]
 
         img.save(filer.base() + 'postimg.png')
+
+def set_for_epaper():
+    with Image.open(filer.base() + 'postimg.png') as img:
+        pixels = img.load()
+
+        rotated_img = Image.new('1', (img.size[1], img.size[0]), 255)
+        rotated_pixels = rotated_img.load()
+
+        for x in range(img.size[0]):
+            for y in range(img.size[1]):
+                rotated_pixels[y, x] = pixels[x, y][0]
+
+    rotated_img.save(filer.base() + 'postimg.png')

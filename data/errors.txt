@@ -1,0 +1,3 @@
+cannot allocate more than 256 colors
+cannot identify image file 'C:/Users/trevo/Documents/Coding/Python/Reddit Frame/postimg.png'
+'int' object is not subscriptable

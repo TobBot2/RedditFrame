@@ -12,7 +12,7 @@ async def get_weather(city: str):
 
     return (weather.current.feels_like, weather.current.sky_text)
 
-def get_weather_icon(weather: str, size: tuple[int, int]):
+def get_weather_icon(weather: str, size: tuple):
     # return new icon image as Image
     icon_w = 600/3
     icon_h = 564/3

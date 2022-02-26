@@ -1,4 +1,4 @@
 import os
 
 def base():
-    return (os.path.dirname(os.getcwd()) + '\\Reddit Frame\\').replace('\\', '/')
+    return (os.path.dirname(os.getcwd()) + '\\').replace('\\', '/')

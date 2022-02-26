@@ -2,6 +2,7 @@ import filer
 
 import requests
 import random
+from PIL import Image, ImageOps
 
 def get_subreddit(index: int = None):
     with open(filer.base() + 'data/subreddits.csv', 'r') as f:
@@ -45,3 +46,7 @@ def get_top_n_json(subreddit: str, n: int, time_frame: str):
         posts.append({'title': titles[i], 'img_url': image_urls[i]})
 
     return posts
+
+def get_title_as_img(title: str, size: tuple):
+    # TODO set text size based on characters. Constrain to input size
+    pass
