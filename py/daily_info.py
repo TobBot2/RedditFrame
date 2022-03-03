@@ -16,20 +16,29 @@ def get_weather_icon(weather: str, size: tuple):
     # return new icon image as Image
     icon_w = 600/3
     icon_h = 564/3
-    if weather == "Sunny" or weather == "Mostly Sunny" or weather == "Partly Sunny":
+
+    sun_icon = ["Clear", "Mostly Clear", "Partly Clear", "Sunny", "Mostly Sunny", "Partly Sunny"]
+    rain_icon = ["Rain", "Rain Showers", "Light Rain And Snow", "Light Rain"]
+    snow_icon = ["Snow", "Snow Showers", "Light Snow"]
+    cloud_icon = ["Cloudy", "Mostly Cloudy", "Partly Cloudy"]
+    storm_icon = ["T-Storms"]
+
+    if weather in sun_icon:
         source_box = (2*icon_w, 2*icon_h, 3*icon_w, 3*icon_h)
-    elif weather == "Rain" or weather == "Rain Showers" or weather == "Light Rain And Snow" or weather == "Light Rain":
+    elif weather in rain_icon:
         source_box = (0, 0, icon_w, icon_h)
-    elif weather == "Snow" or weather == "Snow Showers" or weather == "Light Snow":
+    elif weather in snow_icon:
         source_box = (2*icon_w, 0, 3*icon_w, icon_h)
-    elif weather == "Cloudy" or weather == "Mostly Cloudy":
+    elif weather in cloud_icon:
         source_box = (icon_w, 0, 2*icon_w, icon_h)
-    elif weather == "T-Storms":
+    elif weather in storm_icon:
         source_box = (0, icon_h, icon_w, 2*icon_h)
     else:
+        print("Unsupported weather type:", weather)
         with Image.open(filer.base() + 'data/erroricon.png') as img:
             img.resize(size, Image.BILINEAR)
             img.save(filer.base() + 'icon.png')
+            return
 
     with Image.open(filer.base() + 'data/weathericons.png') as img:
         img = img.resize(size, Image.BILINEAR, source_box)
@@ -38,15 +47,9 @@ def get_weather_icon(weather: str, size: tuple):
 def get_temp_img(temperature: int, height: int): # width is dynamically set
     mono_font = ImageFont.truetype(filer.base() + 'data/Courier Prime Bold.ttf', size=height)
 
-    img = Image.new('RGB', (mono_font.getsize('xx')[0], height), 0)
+    img = Image.new('RGB', (mono_font.getsize('xxxx')[0], height), 0)
 
     graphics = ImageDraw.Draw(img)
-    graphics.text((0, 5), str(temperature), fill=(255,255,255), font=mono_font)
+    graphics.text((0, 5), str(temperature) + '°F', fill=(255,255,255), font=mono_font)
 
     img.save(filer.base() + 'text.png')
-
-if __name__ == "__main__":
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-    (temp, weather) = asyncio.run(get_weather("new york city"))
-
-    print(temp, weather + ".")

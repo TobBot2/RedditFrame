@@ -1,15 +1,19 @@
-import best_reddit as best_reddit
+import best_reddit
 import process_image
 import daily_info
-import filer
-import epaper_display
 
 import time
 import asyncio
+import sys
+import traceback
+
+if sys.platform == 'linux':
+    import epaper_display
 
 def main(index: int = None):
+    # return True if successful
     subreddit = best_reddit.get_subreddit(index)
-    posts = best_reddit.get_top_n_json(subreddit, 10, 'day')
+    posts = best_reddit.get_top_n_json(subreddit, 10, 'week')
 
     (temp, weather) = asyncio.run(daily_info.get_weather("new york city"))
     
@@ -18,48 +22,90 @@ def main(index: int = None):
     daily_info.get_temp_img(temp, 50)
 
     for candidate_post in posts:
-        if candidate_post['img_url'] == None:
+        if best_reddit.recently_viewed(candidate_post['id']):
             continue
 
-        try:
-            create_screen_png((480, 800), candidate_post)
-            print('Image Rendered')
+        if not create_screen_png((480, 800), candidate_post):
+            continue
+
+        if sys.platform == 'linux':
             epaper_display.display_vertical()
-            print('Image Displayed')
-            time.sleep(30)
-        except Exception as e:
-            print('error:', e)
+        elif sys.platform == 'win32':
+            print('rendered image')
+
+        best_reddit.trim_viewed(360)
+        print(subreddit)
+        return True
+    return False
 
 def create_screen_png(screen_size: tuple, post):
-    process_image.get_image_from_url(post['img_url'])
-    (bar_size, is_vertical, is_reject) = process_image.resize_with_bars(screen_size)
+    # return True if successful
+    try:
+        process_image.get_image_from_url(post['img_url'])
+        (bar_size, is_vertical, is_reject) = process_image.resize_with_bars(screen_size)
 
-    if is_reject:
-        # okay this shouldn't raise an exception but it should be handled the same way as an exception so here we are
-        raise Exception("image aspect ratio is too different")
+        if is_reject:
+            return False
+        
+        title_height = bar_size
+        if not is_vertical: title_height = 0
+        best_reddit.get_title_as_img(post['title'], (screen_size[0]-20, title_height))
 
-    process_image.FS_dithering()
-    process_image.reapply_bars(bar_size, is_vertical)
+        process_image.FS_dithering()
+        process_image.reapply_bars(bar_size, is_vertical)
 
-    process_image.FS_dithering('icon.png')
-    process_image.FS_dithering('text.png')
+        process_image.FS_dithering('icon.png')
+        process_image.FS_dithering('text.png')
 
-    process_image.overlay_image('icon.png', (420, 740))
-    process_image.overlay_image('text.png', (360, 740))
+        process_image.overlay_image('icon.png', (screen_size[0] - 60, screen_size[1] - 60))
+        process_image.overlay_image('text.png', (screen_size[0] - 180, screen_size[1] - 60))
+        process_image.overlay_image('title.png', (10, 10))
 
-    process_image.set_for_epaper()
+        return True
+    except Exception as e:
+            with open('C:/Users/trevo/Documents/Coding/Python/Reddit Frame/data/errors.txt') as f:
+                errors = f.readlines()
 
-def loop_all(start_at: int = 0):
-    with open(filer.base() + 'data/subreddits.csv', 'r') as f:
-        length = len(f.read().split(','))
-    
-    for i in range(length - start_at):
-        main(i + start_at)
-        time.sleep(5)
+            if (str(e) + "\n") not in errors: # + "\n" because it's included when doing f.readlines()
+                print("unexpected error: \n")
+                traceback.print_exc()
+                exit()
+
+            print("expected error - finding new image... (" + str(e) + ")")
+            return False
+
+def valid_image(index: int = None):
+    tries = 0 # added so if there's no compatible images in a subreddit, it just fails
+    while True:
+        if main(index) or tries > 15:
+            tries = 0
+            return
+        tries += 1
 
 def loop_random(times):
     for i in range(times):
-        main()
+        valid_image()
+        if sys.platform == 'linux':
+            time.sleep(180) # refresh rate should be at least 180 seconds per manual's request
+        elif sys.platform == 'win32':
+            time.sleep(5)
+
+def loop_all():
+    # only run for testing
+    for i in range(24):
+        valid_image(i)
+        time.sleep(5)
+
+def infinite_cycle(refresh_rate: int):
+    while True:
+        valid_image
+        time.sleep(refresh_rate)
 
 if __name__ == "__main__":
+    if sys.platform == "win32":
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+    #loop_all()
     loop_random(10)
+    # hours_between_refresh = 3
+    # infinite_cycle(60*60*hours_between_refresh)

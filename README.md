@@ -1,10 +1,10 @@
 Reddit Frame
 
 run main.py
+automatically configures based on whether testing on windows or running build on raspberrypi
 
 install -> $ pip3 install { library }
-library: pillow, python-weather, spidev, RPi.GPIO
+external libraries: pillow, python-weather, spidev, RPi.GPIO
+note: spidev and RPi.GPIO can only be downloaded (and only need to be downloaded) on the raspberrypi
 
-waveshare e-paper display tutorial: https://www.waveshare.com/wiki/2.9inch_e-Paper_Module
-
-This won't work on windows as there's not GPIO or spidev stuff, plus some other quirks with asyncio and the file paths
+waveshare e-paper display tutorial: https://www.waveshare.com/wiki/7.5inch_e-Paper_HAT

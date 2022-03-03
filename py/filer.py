@@ -1,4 +1,9 @@
 import os
+import sys
 
 def base():
-    return (os.path.dirname(os.getcwd()) + '\\').replace('\\', '/')
+    subdir = '\\'
+    if sys.platform == 'win32':
+        subdir += 'Reddit Frame\\'
+
+    return (os.path.dirname(os.getcwd()) + subdir).replace('\\', '/')

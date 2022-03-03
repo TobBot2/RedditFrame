@@ -45,7 +45,6 @@ def resize_with_bars(new_size: tuple):
         img = img.resize(new_size, Image.BILINEAR)
         img.save(filer.base() + 'postimg.png')
 
-        # TODO: Fix corrected_border
         if vertical:
             corrected_border = border / (size[0] / new_aspect) * new_size[1]
         else:
@@ -159,7 +158,8 @@ def overlay_image(overlay_img_path: str, position: tuple):
 
         img.save(filer.base() + 'postimg.png')
 
-def set_for_epaper():
+def format_for_epaper():
+    # rotate and convert to '1' filetype (idk what that means but I think it's necessary)
     with Image.open(filer.base() + 'postimg.png') as img:
         pixels = img.load()
 
@@ -168,6 +168,6 @@ def set_for_epaper():
 
         for x in range(img.size[0]):
             for y in range(img.size[1]):
-                rotated_pixels[y, x] = pixels[x, y][0]
+                rotated_pixels[y, x] = pixels[x, img.size[1] - y - 1][0]
 
-    rotated_img.save(filer.base() + 'postimg.png')
+    return rotated_img#.save(filer.base() + 'postimg.png')
