@@ -53,3 +53,6 @@ def get_temp_img(temperature: int, height: int): # width is dynamically set
     graphics.text((0, 5), str(temperature) + '°F', fill=(255,255,255), font=mono_font)
 
     img.save(filer.base() + 'text.png')
+
+def get_date_img(height: int):
+    pass

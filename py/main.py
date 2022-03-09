@@ -34,7 +34,6 @@ def main(index: int = None):
             print('rendered image')
 
         best_reddit.trim_viewed(360)
-        print(subreddit)
         return True
     return False
 
@@ -49,7 +48,7 @@ def create_screen_png(screen_size: tuple, post):
         
         title_height = bar_size
         if not is_vertical: title_height = 0
-        best_reddit.get_title_as_img(post['title'], (screen_size[0]-20, title_height))
+        best_reddit.get_title_as_img(post['title'], (screen_size[0], title_height))
 
         process_image.FS_dithering()
         process_image.reapply_bars(bar_size, is_vertical)
@@ -59,7 +58,7 @@ def create_screen_png(screen_size: tuple, post):
 
         process_image.overlay_image('icon.png', (screen_size[0] - 60, screen_size[1] - 60))
         process_image.overlay_image('text.png', (screen_size[0] - 180, screen_size[1] - 60))
-        process_image.overlay_image('title.png', (10, 10))
+        process_image.overlay_image('title.png', (0, 0))
 
         return True
     except Exception as e:
@@ -71,7 +70,7 @@ def create_screen_png(screen_size: tuple, post):
                 traceback.print_exc()
                 exit()
 
-            print("expected error - finding new image... (" + str(e) + ")")
+            print("expected error (" + str(e) + ")")
             return False
 
 def valid_image(index: int = None):
