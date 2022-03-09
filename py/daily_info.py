@@ -1,3 +1,4 @@
+import datetime
 import filer
 
 import python_weather
@@ -50,9 +51,18 @@ def get_temp_img(temperature: int, height: int): # width is dynamically set
     img = Image.new('RGB', (mono_font.getsize('xxxx')[0], height), 0)
 
     graphics = ImageDraw.Draw(img)
-    graphics.text((0, 5), str(temperature) + '°F', fill=(255,255,255), font=mono_font)
+    graphics.text((0, 5), str(temperature) + '°F', fill=(255, 255, 255), font=mono_font)
 
     img.save(filer.base() + 'text.png')
 
 def get_date_img(height: int):
-    pass
+    date = datetime.datetime.now().strftime("%m/%d")
+
+    mono_font = ImageFont.truetype(filer.base() + 'data/Courier Prime Bold.ttf', size=height)
+
+    img = Image.new('RGB', (mono_font.getsize('xxxxx')[0], height), 0)
+
+    graphics = ImageDraw.Draw(img)
+    graphics.text((0, 5), date, fill=(255, 255, 255), font=mono_font)
+
+    img.save(filer.base() + 'date.png')

@@ -20,6 +20,7 @@ def main(index: int = None):
     # save info as images of size ___
     daily_info.get_weather_icon(weather, (50, 50))
     daily_info.get_temp_img(temp, 50)
+    daily_info.get_date_img(50)
 
     for candidate_post in posts:
         if best_reddit.recently_viewed(candidate_post['id']):
@@ -58,6 +59,7 @@ def create_screen_png(screen_size: tuple, post):
 
         process_image.overlay_image('icon.png', (screen_size[0] - 60, screen_size[1] - 60))
         process_image.overlay_image('text.png', (screen_size[0] - 180, screen_size[1] - 60))
+        process_image.overlay_image('date.png', (10, screen_size[1]-60))
         process_image.overlay_image('title.png', (0, 0))
 
         return True
@@ -74,12 +76,9 @@ def create_screen_png(screen_size: tuple, post):
             return False
 
 def valid_image(index: int = None):
-    tries = 0 # added so if there's no compatible images in a subreddit, it just fails
-    while True:
-        if main(index) or tries > 15:
-            tries = 0
+    for i in range(15): # only tries 15 times, otherwise just fails (likely no valid images in subreddit)
+        if main(index):
             return
-        tries += 1
 
 def loop_random(times):
     for i in range(times):
@@ -95,16 +94,10 @@ def loop_all():
         valid_image(i)
         time.sleep(5)
 
-def infinite_cycle(refresh_rate: int):
-    while True:
-        valid_image
-        time.sleep(refresh_rate)
-
 if __name__ == "__main__":
     if sys.platform == "win32":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
-    #loop_all()
-    loop_random(10)
-    # hours_between_refresh = 3
-    # infinite_cycle(60*60*hours_between_refresh)
+        #loop_all()
+        loop_random(10)
+    elif sys.platform == "linux":
+        valid_image() # just get one. cron job will automatically re-run the script 
