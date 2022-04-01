@@ -1,6 +1,7 @@
 import best_reddit
 import process_image
 import daily_info
+import filer
 
 import time
 import asyncio
@@ -32,7 +33,8 @@ def main(index: int = None):
         if sys.platform == 'linux':
             epaper_display.display_vertical()
         elif sys.platform == 'win32':
-            print('rendered image')
+            #print('rendered image')
+            pass
 
         best_reddit.trim_viewed(360)
         return True
@@ -64,7 +66,7 @@ def create_screen_png(screen_size: tuple, post):
 
         return True
     except Exception as e:
-            with open('C:/Users/trevo/Documents/Coding/Python/Reddit Frame/data/errors.txt') as f:
+            with open(filer.base() + 'data/errors.txt') as f:
                 errors = f.readlines()
 
             if (str(e) + "\n") not in errors: # + "\n" because it's included when doing f.readlines()
@@ -72,7 +74,7 @@ def create_screen_png(screen_size: tuple, post):
                 traceback.print_exc()
                 exit()
 
-            print("expected error (" + str(e) + ")")
+            #print("expected error (" + str(e) + ")")
             return False
 
 def valid_image(index: int = None):
