@@ -14,7 +14,7 @@ if sys.platform == 'linux':
 def main(index: int = None):
     # return True if successful
     subreddit = best_reddit.get_subreddit(index)
-    posts = best_reddit.get_top_n_json(subreddit, 10, 'week')
+    posts = best_reddit.get_top_n_json(subreddit, 20, 'week')
 
     (temp, weather) = asyncio.run(daily_info.get_weather("new york city"))
     
@@ -97,9 +97,12 @@ def loop_all():
         time.sleep(5)
 
 if __name__ == "__main__":
+    print("Running...")
     if sys.platform == "win32":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
         #loop_all()
         loop_random(10)
     elif sys.platform == "linux":
         valid_image() # just get one. cron job will automatically re-run the script 
+
+    print("Done.")

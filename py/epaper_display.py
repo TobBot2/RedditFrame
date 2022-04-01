@@ -10,7 +10,6 @@ def display_vertical():
     epd.Clear()
 
     # postimg.png is assumed to be proper size
-    with Image.open(filer.base() + 'postimg.png') as img:
-        epd.display(epd.getbuffer(process_image.format_for_epaper(img)))
+    epd.display(epd.getbuffer(process_image.format_for_epaper()))
 
     epd.sleep()

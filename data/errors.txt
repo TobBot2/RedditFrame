@@ -1,3 +1,5 @@
 Invalid URL 'None': No schema supplied. Perhaps you meant http://None?
 cannot identify image file 'C:/Users/trevo/Documents/Coding/Python/Reddit Frame/postimg.png'
+cannot identify image file '/home/pi/RedditFrame/postimg.png'
 cannot allocate more than 256 colors
+function takes exactly 1 argument (3 given)

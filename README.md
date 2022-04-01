@@ -1,6 +1,8 @@
 Reddit Frame
 
-run main.py
+run 'main.py' on windows (with working directory of RedditFrame)
+run 'run.sh' on linux (in any directory, or from cronjob via 'bash run.sh')
+
 automatically configures based on whether testing on windows or running build on raspberrypi
 
 install -> $ pip3 install { library }
