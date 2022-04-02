@@ -11,7 +11,7 @@ async def get_weather(city: str):
 
     await weather_client.close()
 
-    return (weather.current.feels_like, weather.current.sky_text)
+    return (weather.current.temperature, weather.current.sky_text)
 
 def get_weather_icon(weather: str, size: tuple):
     # return new icon image as Image
