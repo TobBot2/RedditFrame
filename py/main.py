@@ -16,7 +16,7 @@ def main(index: int = None):
     subreddit = best_reddit.get_subreddit(index)
     posts = best_reddit.get_top_n_json(subreddit, 20, 'week')
 
-    (temp, weather) = asyncio.run(daily_info.get_weather("new york city"))
+    (temp, weather) = asyncio.run(daily_info.get_weather("New York"))
     
     # save info as images of size ___
     daily_info.get_weather_icon(weather, (50, 50))
@@ -29,7 +29,7 @@ def main(index: int = None):
 
         if not create_screen_png((480, 800), candidate_post):
             continue
-
+        print("Rendered (title: " + candidate_post['title'] + ", id: " + candidate_post['id'] + ")")
         if sys.platform == 'linux':
             epaper_display.display_vertical()
         elif sys.platform == 'win32':
@@ -97,7 +97,7 @@ def loop_all():
         time.sleep(5)
 
 if __name__ == "__main__":
-    print("Running...")
+    print("Running... (" + daily_info.get_datetime() + ")")
     if sys.platform == "win32":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
         #loop_all()

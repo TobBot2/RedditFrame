@@ -5,13 +5,14 @@ import python_weather
 import asyncio
 from PIL import Image, ImageDraw, ImageFont
 
+def get_datetime():
+    now = datetime.datetime.now()
+    return now.strftime("%x %X")
+
 async def get_weather(city: str):
-    weather_client = python_weather.Client(format=python_weather.IMPERIAL)
-    weather = await weather_client.find(city)
-
-    await weather_client.close()
-
-    return (weather.current.temperature, weather.current.sky_text)
+    async with python_weather.Client(unit=python_weather.IMPERIAL) as client:
+        weather = await client.get(city)
+        return (weather.current.temperature, weather.current.description)
 
 def get_weather_icon(weather: str, size: tuple):
     # return new icon image as Image
